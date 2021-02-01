@@ -1,0 +1,44 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+
+namespace CSToUnityUtill
+{
+    public static class Log
+    {
+        static public void WriteLine(string msg)
+        {
+#if UNITY_STANDALONE  || UNITY_ANDROID
+            Debug.Log(msg);
+#else
+            Console.WriteLine(msg);
+#endif
+        }
+        static public void WriteLine(string msg, object value)
+        {
+#if UNITY_STANDALONE || UNITY_ANDROID
+            Debug.Log(string.Format("{0}{1}", msg, value));
+#else
+            Console.WriteLine(msg,value);
+#endif
+        }
+        static public void WriteLine(string msg, object value1, object value2)
+        {
+#if UNITY_STANDALONE || UNITY_ANDROID
+            Debug.Log(string.Format("{0}{1}{2}", msg, value1, value2));
+#else
+            Console.WriteLine(msg,value);
+#endif
+        }
+        static public void WriteLine(string msg, object value1, object value2, object value3)
+        {
+#if UNITY_STANDALONE || UNITY_ANDROID
+            Debug.Log(string.Format("{0}{1}{2}{3}", msg, value1, value2, value3));
+#else
+            Console.WriteLine(msg,value);
+#endif
+        }
+    }
+}

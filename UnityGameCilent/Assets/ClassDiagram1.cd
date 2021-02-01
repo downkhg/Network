@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SocketClient">
+    <Position X="6.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAGAAAQgIIAAAgAAAACCIQEAAAAAAMACAACAAIAAAA=</HashCode>
+      <FileName>Assets\Scprit\TCPIP\SocketClient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameClient">
+    <Position X="4.25" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>ABAAAACEAIAAAAgAAAAgAJAIABAAAAAAAACDAAAAABA=</HashCode>
+      <FileName>Assets\Scprit\TCPIP\GameClient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameManager">
+    <Position X="9.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAVAQAEAECAAAABAAAEEAAAABgAAAAAYACAAAAABARQ=</HashCode>
+      <FileName>Assets\Scprit\GameManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GUIManager">
+    <Position X="4.25" Y="4.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="GUIManager.eGUIState">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scprit\GUIManager.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AEQARAAAACAAAAEAAAAIAAAAAAAAAAAAAAAIJAAAAAA=</HashCode>
+      <FileName>Assets\Scprit\GUIManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="맑은 고딕" Size="9" />
+</ClassDiagram>
