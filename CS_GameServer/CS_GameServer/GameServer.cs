@@ -138,6 +138,7 @@ namespace CS_GameServer
                 }
             } while (m_isStart);
         }
+        //받아온 페킷정보를 텍스트로 변환하고 클라이언트들에게 전송.
         public void RecivePackit(SocketInfo socketInfo, char[] splitChars)
         {
             string strData = null;
@@ -153,6 +154,15 @@ namespace CS_GameServer
                 BroadCastMassage(strData);
             }
             while (socketInfo.Connect);
+        }
+        //클라이언트와 연결이 종료되면 클라이언트 리스트에서 삭제한다.
+        public void ReleaseClient(SocketInfo socketInfo)
+        {
+            m_listSocketInfo.Remove(socketInfo);
+            m_nAcepptCount--;
+            BroadCastMassage(string.Format("client:{0}", m_listSocketInfo.Count));
+            Console.WriteLine("AcceptCount:{0}/{1}", m_nAcepptCount, m_listSocketInfo.Count);
+            Console.WriteLine("AcceptCallBack End!!");
         }
         //클라이언트의 접속을 대기하고, 데이터를 받는 콜백함수
         public void AcceptCallBack()
@@ -197,12 +207,7 @@ namespace CS_GameServer
             }
             if (socketClient == null)
                 Console.WriteLine("Accept Cancle");
-            //클라이언트와 연결이 종료되면 클라이언트 리스트에서 삭제한다.
-            m_listSocketInfo.Remove(socketInfo);
-            m_nAcepptCount--;
-            BroadCastMassage(string.Format("client:{0}", m_listSocketInfo.Count));
-            Console.WriteLine("AcceptCount:{0}/{1}", m_nAcepptCount, m_listSocketInfo.Count);
-            Console.WriteLine("AcceptCallBack End!!");
+            ReleaseClient(socketInfo);
         }
         //접속된 특정 클라이언트에 데이터를 전송한다.
         public void SendtoSocket(int idx, string msg)
