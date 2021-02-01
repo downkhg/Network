@@ -138,8 +138,16 @@ namespace CS_GameServer
                 }
             } while (m_isStart);
         }
+        public SocketInfo AddClient(Socket socketClient)
+        {
+            Console.WriteLine("socket Client Conneting!!");
+            SocketInfo socketInfo = new SocketInfo(socketClient, 1024, true);
+            m_listSocketInfo.Add(socketInfo);
+            BroadCastMassage(string.Format("client:{0}", m_listSocketInfo.Count));
+            return socketInfo;
+        }
         //받아온 페킷정보를 텍스트로 변환하고 클라이언트들에게 전송.
-        public void RecivePackit(SocketInfo socketInfo, char[] splitChars)
+        public void RecivePackitProcess(SocketInfo socketInfo, char[] splitChars)
         {
             string strData = null;
             do
@@ -156,7 +164,7 @@ namespace CS_GameServer
             while (socketInfo.Connect);
         }
         //클라이언트와 연결이 종료되면 클라이언트 리스트에서 삭제한다.
-        public void ReleaseClient(SocketInfo socketInfo)
+        public void RemoveClient(SocketInfo socketInfo)
         {
             m_listSocketInfo.Remove(socketInfo);
             m_nAcepptCount--;
@@ -180,9 +188,10 @@ namespace CS_GameServer
                 Console.WriteLine(socketClient.RemoteEndPoint.ToString());
                 //클라이언트가 접속완료한다.
                 Console.WriteLine("socket Client Conneting!!");
-                socketInfo = new SocketInfo(socketClient, 1024, true);
-                m_listSocketInfo.Add(socketInfo);
-                BroadCastMassage(string.Format("client:{0}",m_listSocketInfo.Count));
+                //socketInfo = new SocketInfo(socketClient, 1024, true);
+                //m_listSocketInfo.Add(socketInfo);
+                //BroadCastMassage(string.Format("client:{0}",m_listSocketInfo.Count));
+                socketInfo = AddClient(socketClient);
                 //접속완료된 소켓확인하기
                 ShowEndPointCheck();
                 //string strData = null;
@@ -198,7 +207,7 @@ namespace CS_GameServer
                 //    BroadCastMassage(strData);
                 //}
                 //while (socketInfo.Connect);
-                RecivePackit(socketInfo,splitChar);
+                RecivePackitProcess(socketInfo,splitChar);
             }
             catch (Exception e)
             {
@@ -207,7 +216,7 @@ namespace CS_GameServer
             }
             if (socketClient == null)
                 Console.WriteLine("Accept Cancle");
-            ReleaseClient(socketInfo);
+            RemoveClient(socketInfo);
         }
         //접속된 특정 클라이언트에 데이터를 전송한다.
         public void SendtoSocket(int idx, string msg)
