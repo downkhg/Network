@@ -138,6 +138,22 @@ namespace CS_GameServer
                 }
             } while (m_isStart);
         }
+        public void RecivePackit(SocketInfo socketInfo, char[] splitChars)
+        {
+            string strData = null;
+            do
+            {
+                byte[] bytes = socketInfo.GetBuffer();
+
+                socketInfo.Socket.Receive(bytes);
+
+                strData = System.Text.Encoding.UTF8.GetString(bytes);
+                Console.WriteLine(strData.Split(splitChars)[0]);
+                socketInfo.ClearBuffer();
+                BroadCastMassage(strData);
+            }
+            while (socketInfo.Connect);
+        }
         //클라이언트의 접속을 대기하고, 데이터를 받는 콜백함수
         public void AcceptCallBack()
         {
@@ -159,19 +175,20 @@ namespace CS_GameServer
                 BroadCastMassage(string.Format("client:{0}",m_listSocketInfo.Count));
                 //접속완료된 소켓확인하기
                 ShowEndPointCheck();
-                string strData = null;
-                do
-                {
-                    byte[] bytes = socketInfo.GetBuffer();
+                //string strData = null;
+                //do
+                //{
+                //    byte[] bytes = socketInfo.GetBuffer();
 
-                    socketClient.Receive(bytes);
+                //    socketClient.Receive(bytes);
 
-                    strData = System.Text.Encoding.UTF8.GetString(bytes);
-                    Console.WriteLine(strData.Split(splitChar)[0]);
-                    socketInfo.ClearBuffer();
-                    BroadCastMassage(strData);
-                }
-                while (socketInfo.Connect);
+                //    strData = System.Text.Encoding.UTF8.GetString(bytes);
+                //    Console.WriteLine(strData.Split(splitChar)[0]);
+                //    socketInfo.ClearBuffer();
+                //    BroadCastMassage(strData);
+                //}
+                //while (socketInfo.Connect);
+                RecivePackit(socketInfo,splitChar);
             }
             catch (Exception e)
             {
