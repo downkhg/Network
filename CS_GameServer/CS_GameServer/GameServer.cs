@@ -18,9 +18,16 @@ namespace CS_GameServer
 {
     public class SocketInfo
     {
-        byte[] m_buffer; //리시브용 버퍼
+        //byte[] m_buffer; //리시브용 버퍼
+        Queue<byte[]> m_queBuffer;
+        int m_nBufferSize;
         bool m_isConnect; //연결상태 확안
         Socket m_socket; //클라이언트의 소켓
+
+        public int BufferSize
+        {
+            get { return m_nBufferSize; }
+        }
 
         public Socket Socket
         {
@@ -35,20 +42,28 @@ namespace CS_GameServer
         public SocketInfo(Socket socket, int bufSize, bool connect = false)
         {
             m_socket = socket;
-            m_buffer = new byte[bufSize];
+            m_nBufferSize = bufSize;
+            m_queBuffer = new Queue<byte[]>();
             m_isConnect = connect;
-            Array.Clear(m_buffer, 0, m_buffer.Length);
+        }
+
+        public void AddBuffer(byte[] buffer)
+        {
+            m_queBuffer.Enqueue(buffer);
         }
 
         public byte[] GetBuffer()
         {
-            return m_buffer;
+            byte[] buffer = null;
+            if(m_queBuffer.Count > 0)
+                buffer = m_queBuffer.Dequeue();
+            return buffer;
         }
 
-        public void ClearBuffer()
-        {
-            Array.Clear(m_buffer, 0, m_buffer.Length);
-        }
+        //public void ClearBuffer()
+        //{
+        //    Array.Clear(m_buffer, 0, m_buffer.Length);
+        //}
     }
 
     public class GameServer
@@ -58,6 +73,8 @@ namespace CS_GameServer
         int m_nPort = -1;
         bool m_isStart = false;
         int m_nAcepptCount = 0;
+
+        char[] m_splitChar = { '\n' };
         List<SocketInfo> m_listSocketInfo = new List<SocketInfo>();
 
         public int AcepptCount { get { return m_nAcepptCount; } }
@@ -147,21 +164,28 @@ namespace CS_GameServer
             return socketInfo;
         }
         //받아온 페킷정보를 텍스트로 변환하고 클라이언트들에게 전송.
-        public void RecivePackitProcess(SocketInfo socketInfo, char[] splitChars)
+        public void RecivePackitProcess(SocketInfo socketInfo)
         {
-            string strData = null;
             do
             {
-                byte[] bytes = socketInfo.GetBuffer();
-
+                byte[] bytes = new byte[socketInfo.BufferSize];
                 socketInfo.Socket.Receive(bytes);
-
-                strData = System.Text.Encoding.UTF8.GetString(bytes);
-                Console.WriteLine(strData.Split(splitChars)[0]);
-                socketInfo.ClearBuffer();
-                BroadCastMassage(strData);
+                socketInfo.AddBuffer(bytes);
+                //SendClientMsg(socketInfo,m_splitChar);
             }
             while (socketInfo.Connect);
+        }
+        public bool SendClientMsg(SocketInfo socketInfo, char[] splitChars)
+        {
+            byte[] bytes = socketInfo.GetBuffer();
+            if (bytes != null)
+            {
+                string strData = System.Text.Encoding.UTF8.GetString(bytes);
+                Console.WriteLine(strData.Split(splitChars)[0]);
+                BroadCastMassage(strData);
+                return true;
+            }
+            return false;
         }
         //클라이언트와 연결이 종료되면 클라이언트 리스트에서 삭제한다.
         public void RemoveClient(SocketInfo socketInfo)
@@ -172,6 +196,24 @@ namespace CS_GameServer
             Console.WriteLine("AcceptCount:{0}/{1}", m_nAcepptCount, m_listSocketInfo.Count);
             Console.WriteLine("AcceptCallBack End!!");
         }
+      
+        public void SendClientCallBack()
+        {
+            Console.WriteLine("SendClientCallBack Start!!");
+            while (true)
+            {
+                if (m_listSocketInfo.Count > 0)
+                {
+                    foreach (SocketInfo socketInfo in m_listSocketInfo)
+                    {
+                        if (SendClientMsg(socketInfo, m_splitChar))
+                            Console.WriteLine("SendClient" + socketInfo.Socket.ToString());
+                    }
+                }
+            }
+            Console.WriteLine("SendClientCallBack End!!");
+        }
+
         //클라이언트의 접속을 대기하고, 데이터를 받는 콜백함수
         public void AcceptCallBack()
         {
@@ -179,7 +221,7 @@ namespace CS_GameServer
 
             Socket socketClient = null;
             SocketInfo socketInfo = null;
-            char[] splitChar = { '\n' };
+           
             try
             {
                 //어셉트를 대기한다.
@@ -188,6 +230,10 @@ namespace CS_GameServer
                 Console.WriteLine(socketClient.RemoteEndPoint.ToString());
                 //클라이언트가 접속완료한다.
                 Console.WriteLine("socket Client Conneting!!");
+
+                ThreadStart threadStart = new ThreadStart(AcceptCallBack);
+                Thread thread = new Thread(threadStart);
+
                 //socketInfo = new SocketInfo(socketClient, 1024, true);
                 //m_listSocketInfo.Add(socketInfo);
                 //BroadCastMassage(string.Format("client:{0}",m_listSocketInfo.Count));
@@ -195,7 +241,8 @@ namespace CS_GameServer
                 //접속완료된 소켓확인하기
                 ShowEndPointCheck();
                 //패킷을 분석하고 문자열 변환
-                RecivePackitProcess(socketInfo,splitChar);
+                RecivePackitProcess(socketInfo);
+                //SendClientMsg(socketInfo, m_splitChar);
             }
             catch (Exception e)
             {
