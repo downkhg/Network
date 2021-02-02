@@ -194,19 +194,7 @@ namespace CS_GameServer
                 socketInfo = AddClient(socketClient);
                 //접속완료된 소켓확인하기
                 ShowEndPointCheck();
-                //string strData = null;
-                //do
-                //{
-                //    byte[] bytes = socketInfo.GetBuffer();
-
-                //    socketClient.Receive(bytes);
-
-                //    strData = System.Text.Encoding.UTF8.GetString(bytes);
-                //    Console.WriteLine(strData.Split(splitChar)[0]);
-                //    socketInfo.ClearBuffer();
-                //    BroadCastMassage(strData);
-                //}
-                //while (socketInfo.Connect);
+                //패킷을 분석하고 문자열 변환
                 RecivePackitProcess(socketInfo,splitChar);
             }
             catch (Exception e)
