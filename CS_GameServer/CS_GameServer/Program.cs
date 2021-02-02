@@ -17,9 +17,12 @@ namespace CS_GameServer
             //포트를 지정하고 바인딩하고 리스닝한다.
             socketServer.Bind(15000, 10);
             //완료된 서버
-            ThreadStart threadStart = new ThreadStart(socketServer.MultiClientAcceptCallBack);
-            Thread thread = new Thread(threadStart);
-            thread.Start();
+            ThreadStart threadStartAccept = new ThreadStart(socketServer.MultiClientAcceptCallBack);
+            Thread threadAccept = new Thread(threadStartAccept);
+            ThreadStart threadStartSend = new ThreadStart(socketServer.SendClientCallBack);
+            Thread threadSend = new Thread(threadStartSend);
+            threadAccept.Start();
+            threadSend.Start();
             string msg = "";
             do
             {
