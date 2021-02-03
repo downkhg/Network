@@ -52,6 +52,7 @@ namespace SocketWrapper
         int m_nPort = -1;
         bool m_isStart = false;
         int m_nAcepptCount = 0;
+
         List<SocketInfo> m_listSocketInfo = new List<SocketInfo>();
 
         public int AcepptCount{ get{return m_nAcepptCount;} }

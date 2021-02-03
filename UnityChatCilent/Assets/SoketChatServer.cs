@@ -12,6 +12,7 @@ public class SoketChatServer : MonoBehaviour
     public string m_strInputText;
     string m_strChatString;
     string m_strResiveBuffer;
+    List<string> m_listMSG = new List<string>();
 
     private void Start()
     {
@@ -21,19 +22,28 @@ public class SoketChatServer : MonoBehaviour
         Thread thread = new Thread(threadStart);
         thread.Start();
     }
-
+    int idx = 0;
     private void Update()
     {
+
+        for (int i = 0; i < 9999; i++)
+        {
+            socketClient.SendData(string.Format("test{0}", idx));
+            idx++;
+        }
+  
+
         if(socketClient.CheckReciveData)
         {
-            m_strChatString += socketClient.ResiveMsg + "\n";
+            //m_listMSG.Add(socketClient.ResiveMsg);
+           m_strChatString += socketClient.ResiveMsg + "\n";
         }
     }
 
     Vector2 vScrollPos;
     private void OnGUI()
     {
-        int size = 100;
+        int size = 9999;
         vScrollPos = GUI.BeginScrollView(new Rect(0, 0, 300, 200), vScrollPos, new Rect(0, 0, 300, 20 * size)); ;
         GUI.Box(new Rect(0, 0, 300, 20 * size), m_strChatString);
         GUI.EndScrollView();

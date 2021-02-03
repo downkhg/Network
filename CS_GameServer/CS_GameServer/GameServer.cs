@@ -109,10 +109,20 @@ namespace CS_GameServer
             m_iPAddress = GetIPAddress();
             Console.WriteLine("Server IPAddress: {0}...", m_iPAddress);
         }
+
+        public void Stop()
+        {
+            m_isStart = false;
+
+            foreach(SocketInfo socketInfo in m_listSocketInfo)
+            {
+                socketInfo.Socket.Shutdown(SocketShutdown.Both);
+            }
+        }
+
         //서버를 닫는다.
         public void Close()
         {
-            m_isStart = false;
             m_socketServer.Close();
         }
         //서버를 포트에 바인드시키고, 접속 대기상태로 변경한다.
@@ -173,7 +183,7 @@ namespace CS_GameServer
                 socketInfo.AddBuffer(bytes);
                 //SendClientMsg(socketInfo,m_splitChar);
             }
-            while (socketInfo.Connect);
+            while (m_isStart);
         }
         public bool SendClientMsg(SocketInfo socketInfo, char[] splitChars)
         {
@@ -200,7 +210,7 @@ namespace CS_GameServer
         public void SendClientCallBack()
         {
             Console.WriteLine("SendClientCallBack Start!!");
-            while (true)
+            while (m_isStart)
             {
                 if (m_listSocketInfo.Count > 0)
                 {
@@ -246,12 +256,16 @@ namespace CS_GameServer
             }
             catch (Exception e)
             {
-                socketInfo.Connect = false;
+                //socketInfo.Connect = false;
                 Console.WriteLine("Exception:" + e);
+                return;
             }
             if (socketClient == null)
                 Console.WriteLine("Accept Cancle");
+            Console.WriteLine("AcceptCallBack isStart = false!!");
             RemoveClient(socketInfo);
+
+            Console.WriteLine("AcceptCallBack End!!");
         }
         //접속된 특정 클라이언트에 데이터를 전송한다.
         public void SendtoSocket(int idx, string msg)
