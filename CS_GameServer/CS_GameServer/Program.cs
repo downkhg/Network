@@ -17,12 +17,18 @@ namespace CS_GameServer
             //포트를 지정하고 바인딩하고 리스닝한다.
             socketServer.Bind(15000, 10);
             //완료된 서버
+
+            //클라이언트를 대기하는 스레드 생성
             ThreadStart threadStartAccept = new ThreadStart(socketServer.MultiClientAcceptCallBack);
             Thread threadAccept = new Thread(threadStartAccept);
+
+            threadAccept.Start();
+            //클라이언트에 받은데이터를 돌려주는 스레드 생성
             ThreadStart threadStartSend = new ThreadStart(socketServer.SendClientCallBack);
             Thread threadSend = new Thread(threadStartSend);
-            threadAccept.Start();
+            
             threadSend.Start();
+
             string msg = "";
             do
             {
@@ -33,6 +39,10 @@ namespace CS_GameServer
                 Console.WriteLine("{0}/{1}", socketServer.AcepptCount, socketServer.ClientList.Count);
             }
             while (msg != "exit");
+            socketServer.Stop();
+            Console.WriteLine("Server Join...");
+            threadAccept.Join();
+            threadSend.Join();
             Console.WriteLine("Server Close...");
             socketServer.Close();
         }
