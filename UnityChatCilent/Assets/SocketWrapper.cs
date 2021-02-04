@@ -52,7 +52,6 @@ namespace SocketWrapper
         int m_nPort = -1;
         bool m_isStart = false;
         int m_nAcepptCount = 0;
-
         List<SocketInfo> m_listSocketInfo = new List<SocketInfo>();
 
         public int AcepptCount{ get{return m_nAcepptCount;} }
@@ -211,6 +210,8 @@ namespace SocketWrapper
         bool m_isReciveData = false;
         string m_strResiveMsg;
 
+        Queue<byte[]> m_listBufferQueue = new Queue<byte[]>();
+
         public bool CheckReciveData { get { return m_isReciveData; } }
         public string ResiveMsg { get { m_isReciveData = false; return m_strResiveMsg; } }
 
@@ -275,6 +276,16 @@ namespace SocketWrapper
                 Log.WriteLine("Exception:" + e);
             }
         }
+
+        public byte[] GetBuffer()
+        {
+
+            byte[] bytes = null;
+            if (m_listBufferQueue.Count > 0)
+                m_listBufferQueue.Dequeue();
+            return bytes;
+        }
+
         //접속된 서버에서 데이터를 받는다.
         public void ReceivedCallBack()
         {
@@ -290,10 +301,11 @@ namespace SocketWrapper
                 while (m_isRecive)
                 {
                     int byteSize = stream.Read(bytes, 0, bytes.Length);
-                    m_strResiveMsg = Encoding.UTF8.GetString(bytes, 0, byteSize);
-                    Console.WriteLine("Received:" + m_strResiveMsg);
-                    Array.Clear(bytes, 0, 1024);
-                    m_isReciveData = true;
+                    //m_strResiveMsg = Encoding.UTF8.GetString(bytes, 0, byteSize);
+                    //Console.WriteLine("Received:" + m_strResiveMsg);
+                    //Array.Clear(bytes, 0, 1024);
+                    //m_isReciveData = true;
+                    m_listBufferQueue.Enqueue(bytes);
                 }
 
                 stream.Close();
@@ -305,6 +317,8 @@ namespace SocketWrapper
             }
         }
     }
+
+
 
     //기능을 테스트하기위해 제공되는 샘플 클래스
     static public class Sample
