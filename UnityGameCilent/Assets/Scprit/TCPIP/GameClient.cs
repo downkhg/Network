@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using CSToUnityUtill;
 using System.Threading;
+using System.Text;
+
 [System.Serializable]
 public class GameClient
 {
@@ -36,21 +38,35 @@ public class GameClient
     {
         if (socketClient.Connect(m_strServerIP, m_nPort))
         {
-            Log.WriteLine("Connect Complet!!");
+            Debug.Log("Connect Complet!!");
             ThreadStart threadStart = new ThreadStart(socketClient.ReceivedCallBack);
             Thread thread = new Thread(threadStart);
             thread.Start();
-            Log.WriteLine("Receive Start!!");
+            Debug.Log("Receive Start!!");
+            //ThreadStart threadStartDeque = new ThreadStart(ProcessDequneCallBack);
+            //Thread threadDeque = new Thread(threadStartDeque);
+            //threadDeque.Start();
+            //Debug.Log("Deque Start!!");
         }
         else
-            Log.WriteLine("Connect is Failed!");
+            Debug.Log("Connect is Failed!");
     }
+    //스레드에서는 오브젝트 생성과 관련된 스크립트를 사용할수 없으로 콜백으로 처리가 불가능하다.
+    //public void ProcessDequneCallBack()
+    //{
+    //    Debug.Log("ProcessDequne start!");
+    //    while(socketClient.CheckDisconnet() == true)
+    //    {
+    //        ProcessRecive();
+    //    }
+    //    Debug.Log("ProcessDequne end!");
+    //}
 
     public void UpdateRecive(GameManager gameManager)
     {
-        if (socketClient.CheckReciveData)
+        if (socketClient.CheckDisconnet())
         {
-            ProcessRecive(gameManager);
+            ProcessRecive();
         }
     }
 
@@ -59,11 +75,17 @@ public class GameClient
         socketClient.SendData(msg);
     }
 
-    public void ProcessRecive(GameManager gameManager)
+    public void ProcessRecive()
     {
-        string reciveData = socketClient.ResiveMsg;
+        Debug.Log("ProcessRecive wait...");
+        GameManager gameManager = GameManager.GetInstance();
+        if (gameManager == null) { Debug.Log("ProcessRecive wait..."); return; }
+        byte[] bytes = socketClient.GetBuffer();
+        if (bytes == null) { /*Debug.Log("ProcessRecive Queue is Empty...");*/ return; };
+        Debug.Log("ProcessRecive start!");
+        string reciveData = Encoding.UTF8.GetString(bytes).Trim();
         string[] recivePart = reciveData.Split(new char[] { ':' });
-
+        Debug.Log("ProcessRecive recivePart!:" + reciveData);
         string header = recivePart[0];
         string body = recivePart[1];
 
@@ -106,6 +128,7 @@ public class GameClient
                 //m_strChatString += socketClient.ResiveMsg + "\n";
                 break;
         }
+        Debug.Log("ProcessRecive end!");
     }
 
 
@@ -119,7 +142,7 @@ public class GameClient
         GUI.EndScrollView();
 
         m_strInputText = GUI.TextField(new Rect(0,200,200,20), m_strInputText);
-        if(GUI.Button(new Rect(200, 200,100,20), "Send:"+ socketClient.CheckReciveData))
+        if(GUI.Button(new Rect(200, 200,100,20), "Send:"))//+ socketClient.CheckReciveData))
         {
             socketClient.SendDataIP(m_strInputText);
             m_strInputText = "";
