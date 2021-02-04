@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SocketWrapper;
 using System.Threading;
+using System.Text;
 
 public class SoketChatServer : MonoBehaviour
 {
@@ -31,12 +32,14 @@ public class SoketChatServer : MonoBehaviour
             socketClient.SendData(string.Format("test{0}", idx));
             idx++;
         }
-  
 
-        if(socketClient.CheckReciveData)
+
+        byte[] buffer = socketClient.GetBuffer();
+        if(buffer != null)
         {
             //m_listMSG.Add(socketClient.ResiveMsg);
-           m_strChatString += socketClient.ResiveMsg + "\n";
+            string m_strResiveMsg = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+            m_strChatString += m_strResiveMsg;
         }
     }
 
