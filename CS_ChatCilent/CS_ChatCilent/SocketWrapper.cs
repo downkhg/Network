@@ -353,7 +353,7 @@ namespace SocketWrapper
 
             Thread threadProcess = new Thread(threadStartProcess);
             threadProcess.Start();
-
+            //큐잉테스트용 테스트
             int idx = 0;
             while (true)
             {
@@ -362,6 +362,7 @@ namespace SocketWrapper
                 //Log.WriteLine("Send... " + msg);
                 idx++;
             }
+            ////입력 전송
             //string msg = null;
             //do
             //{
