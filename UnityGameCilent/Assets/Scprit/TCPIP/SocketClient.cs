@@ -1,32 +1,35 @@
-﻿/*##################################
+﻿
+/*##################################
 게임클라이언트_소켓클라이언트래퍼(포트폴리오 수업용)
 파일명: SocketClient.cs
 작성자 : 김홍규(downkhg@gmail.com)
-마지막수정날짜 : 2019.11.28
+이전수정날짜 : 2019.11.28
+마지막수정날짜 : 2021.02.04(버퍼큐사용)
 유니티작업버전: 2018.3.14
-버전 : 1.00
+버전 : 1.05
 ###################################*/
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using UnityEngine;
 using CSToUnityUtill;
 using System;
 using System.Text;
+#if UNITY_STANDALONE || UNITY_ANDROID
+using UnityEngine;
+#endif
 
 public class SocketClient
 {
     Socket m_socketClient;
     IPAddress m_ServerIPAddress;
     bool m_isRecive = false;
-    bool m_isReciveData = false;
-    bool m_isLoop = true;
-    string m_strResiveMsg;
     int m_nBufferSize = 1024;
+    //bool m_isReciveData = false;
 
-    public bool CheckReciveData { get { return m_isReciveData; } }
-    public string ResiveMsg { get { m_isReciveData = false; return m_strResiveMsg; } }
+    Queue<byte[]> m_listBufferQueue = new Queue<byte[]>();
+
+    //public bool CheckReciveData { get { return m_isReciveData; } }
 
     static public IPAddress GetIPAddress()
     {
@@ -52,8 +55,9 @@ public class SocketClient
     //소켓을 초기화한다.
     public void Init()
     {
-        Log.WriteLine("Client Socket Init...");
+        Console.WriteLine("Client Socket Init...");
         m_socketClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
+
     }
     //서버에 접속을 시도한다.
     public bool Connect(string serverip, int port)
@@ -69,20 +73,19 @@ public class SocketClient
         }
         catch (Exception ex)
         {
-            Log.WriteLine("Connect Failed!" + ex);
+            Console.WriteLine("Connect Failed!" + ex);
             return false;
         }
         return true;
-    }
-    public bool CheckDisconnet()
-    {
-        return m_isRecive;
     }
     public void Disconnet()
     {
         m_isRecive = false;
     }
-    //접속된 서버에 메세지를 보낸다.
+    public bool CheckDisconnet()
+    {
+        return m_isRecive;
+    }
     public void SendDataIP(string msg)
     {
         try
@@ -102,7 +105,7 @@ public class SocketClient
         try
         {
             string packet = string.Format("{0}\n", msg);
-            byte[] temp = Encoding.UTF8.GetBytes(packet); 
+            byte[] temp = Encoding.UTF8.GetBytes(packet);
             byte[] bytes = new byte[m_nBufferSize];
             for (int i = 0; i < temp.Length; i++) bytes[i] = temp[i];
             m_socketClient.Send(bytes);
@@ -112,6 +115,18 @@ public class SocketClient
             Log.WriteLine("Exception:" + e);
         }
     }
+
+    public byte[] GetBuffer()
+    {
+
+        byte[] bytes = null;
+        if (m_listBufferQueue.Count > 0)
+        {
+            bytes = m_listBufferQueue.Dequeue();
+        }
+        return bytes;
+    }
+
     //접속된 서버에서 데이터를 받는다.
     public void ReceivedCallBack()
     {
@@ -119,7 +134,6 @@ public class SocketClient
         m_isRecive = true;
         byte[] bytes = null;
         NetworkStream stream = null;
-        m_isLoop = true;
         try
         {
             bytes = new byte[m_nBufferSize];
@@ -127,14 +141,14 @@ public class SocketClient
 
             while (m_isRecive)
             {
-                if (m_isReciveData == false)
-                {
-                    int byteSize = stream.Read(bytes, 0, bytes.Length);
-                    m_strResiveMsg = Encoding.UTF8.GetString(bytes, 0, byteSize);
-                    Log.WriteLine("Received["+m_strResiveMsg.Length+"]:" + m_strResiveMsg);
-                    Array.Clear(bytes, 0, bytes.Length);
-                    m_isReciveData = true;
-                }
+                Log.WriteLine("Buffer Read Start!");
+                int byteSize = stream.Read(bytes, 0, bytes.Length);
+                //m_strResiveMsg = Encoding.UTF8.GetString(bytes, 0, byteSize);
+                //Console.WriteLine("Received:" + m_strResiveMsg);
+                //Array.Clear(bytes, 0, 1024);
+                //m_isReciveData = true;
+                m_listBufferQueue.Enqueue(bytes);
+                Log.WriteLine("BufferQueueCount:{0}", m_listBufferQueue.Count);
             }
 
             stream.Close();
@@ -144,6 +158,5 @@ public class SocketClient
         {
             Log.WriteLine("Exception:" + e);
         }
-        m_isLoop = false;
     }
 }
