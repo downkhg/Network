@@ -208,12 +208,12 @@ namespace SocketWrapper
         IPAddress m_ServerIPAddress;
         bool m_isRecive = false;
         bool m_isReciveData = false;
-        //string m_strResiveMsg;
+        string m_strResiveMsg;
 
         Queue<byte[]> m_listBufferQueue = new Queue<byte[]>();
 
         public bool CheckReciveData { get { return m_isReciveData; } }
-        //public string ResiveMsg { get { m_isReciveData = false; return m_strResiveMsg; } }
+        public string ResiveMsg { get { m_isReciveData = false; return m_strResiveMsg; } }
 
         static public IPAddress GetIPAddress()
         {
@@ -282,9 +282,7 @@ namespace SocketWrapper
 
             byte[] bytes = null;
             if (m_listBufferQueue.Count > 0)
-            {
-                bytes = m_listBufferQueue.Dequeue();
-            }
+                m_listBufferQueue.Dequeue();
             return bytes;
         }
 
@@ -302,14 +300,12 @@ namespace SocketWrapper
 
                 while (m_isRecive)
                 {
-                    Log.WriteLine("Buffer Read Start!");
                     int byteSize = stream.Read(bytes, 0, bytes.Length);
                     //m_strResiveMsg = Encoding.UTF8.GetString(bytes, 0, byteSize);
                     //Console.WriteLine("Received:" + m_strResiveMsg);
                     //Array.Clear(bytes, 0, 1024);
                     //m_isReciveData = true;
                     m_listBufferQueue.Enqueue(bytes);
-                    Log.WriteLine("BufferQueueCount:{0}", m_listBufferQueue.Count);
                 }
 
                 stream.Close();
@@ -334,47 +330,19 @@ namespace SocketWrapper
 
             socketClient.Init();
 
-            socketClient.Connect("172.30.1.17", 15000);
+            socketClient.Connect("192.168.0.128", 15000);
             //스레드를 이용하여 서버로부터 데이터를 전송받는다.
             ThreadStart threadStart = new ThreadStart(socketClient.ReceivedCallBack);
             Thread thread = new Thread(threadStart);
             thread.Start();
 
-            ThreadStart threadStartProcess = new ThreadStart(
-                () => 
-                {
-                    
-                    while (true)
-                    {
-                        byte[] bytes = socketClient.GetBuffer();
-                        if(bytes != null)
-                            Console.WriteLine(Encoding.UTF8.GetString(bytes).Trim());
-                    }
-                }
-                );
-
-            Thread threadProcess = new Thread(threadStartProcess);
-            threadProcess.Start();
-            //큐잉테스트용 테스트
-            int idx = 0;
-            while (true)
+            string msg = null;
+            do
             {
-                string msg = string.Format("test{0}", idx);
+                msg = Console.ReadLine();
                 socketClient.SendData(msg);
-                //Log.WriteLine("Send... " + msg);
-                idx++;
-            }
-            ////입력 전송
-            //string msg = null;
-            //do
-            //{
-            //    msg = Console.ReadLine();
-            //    for (int i = 0; i < 999; i++)
-            //    {
-            //        socketClient.SendData(msg);
-            //        //Log.WriteLine("Send... " + msg);
-            //    }
-            //} while (msg != "exit");
+                Log.WriteLine("Send... " + msg);
+            } while (msg != "exit");
         }
         static public void Server()
         {
@@ -390,6 +358,7 @@ namespace SocketWrapper
             thread.Start();
 
             string msg = "";
+
             do
             {
                 Console.Write("MSG:");
