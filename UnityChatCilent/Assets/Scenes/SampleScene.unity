@@ -279,3 +279,4 @@ MonoBehaviour:
   m_strServerIP: 172.30.1.17
   m_nPort: 15000
   m_strInputText: 
+  m_nFramePerSendCount: 100

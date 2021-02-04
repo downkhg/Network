@@ -29,6 +29,11 @@ namespace CS_GameServer
             get { return m_nBufferSize; }
         }
 
+        public int GetQueueCount()
+        {
+            return m_queBuffer.Count();
+        }
+
         public Socket Socket
         {
             get { return m_socket; }
@@ -181,6 +186,7 @@ namespace CS_GameServer
                 byte[] bytes = new byte[socketInfo.BufferSize];
                 socketInfo.Socket.Receive(bytes);
                 socketInfo.AddBuffer(bytes);
+                Console.WriteLine("soketQuequCount:"+socketInfo.GetQueueCount());
                 //SendClientMsg(socketInfo,m_splitChar);
             }
             while (m_isStart);

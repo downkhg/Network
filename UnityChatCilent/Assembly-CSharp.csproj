@@ -64,9 +64,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\CSToUnityUtill.cs" />
-    <Compile Include="Assets\SocketWrapper.cs" />
-    <Compile Include="Assets\SoketChatServer.cs" />
+    <Compile Include="Assets\Scripts\CSToUnityUtill.cs" />
+    <Compile Include="Assets\Scripts\SocketWrapper.cs" />
+    <Compile Include="Assets\Scripts\SoketChatServer.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/KHG/source/repos/Network/UnityChatCilent/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
