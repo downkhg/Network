@@ -23,6 +23,7 @@ namespace CS_GameServer
             Thread threadAccept = new Thread(threadStartAccept);
 
             threadAccept.Start();
+
             //클라이언트에 받은데이터를 돌려주는 스레드 생성
             ThreadStart threadStartSend = new ThreadStart(socketServer.SendClientCallBack);
             Thread threadSend = new Thread(threadStartSend);
