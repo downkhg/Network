@@ -107,7 +107,6 @@ namespace Serialization
         }
 
         //출처: https://im-first-rate.tistory.com/65 [웃으면 1류다]
-      
         public class DES
         {
             // Key 값은 무조건 8자리여야한다.

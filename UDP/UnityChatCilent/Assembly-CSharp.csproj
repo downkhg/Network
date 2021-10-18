@@ -65,7 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\CSToUnityUtill.cs" />
-    <Compile Include="Assets\Scripts\SoketChatServer.cs" />
+    <Compile Include="Assets\Scripts\SocketChatClient.cs" />
     <Compile Include="Assets\Scripts\TCPSocketWrapper.cs" />
     <Compile Include="Assets\Scripts\UDPSocketWapper.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">

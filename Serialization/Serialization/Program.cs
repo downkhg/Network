@@ -49,7 +49,7 @@ namespace Serialization
             BinaryFormatter serializer = new BinaryFormatter();
 
             NameCard cNameCard = new NameCard();
-            cNameCard.Name = "test";
+            cNameCard.Name = "test2222";
             cNameCard.Phone = "010-1234-4567";
             cNameCard.Age = 22;
 
@@ -76,7 +76,8 @@ namespace Serialization
             //FileTestMain();
             //BufferTestMain();
             //CryptionTest.CryptionTestMain();//오류있음. 샘플코드가 정상적으로 작동하지않음.
-            CryptionTest.DESCryptoTestMain();//DES암호화 적용 샘플
+            //CryptionTest.DESCryptoTestMain();//DES암호화 적용 샘플
+            OpenSSL.Sample();
         }
     }
 }
