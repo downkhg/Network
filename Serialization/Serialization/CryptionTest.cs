@@ -122,13 +122,13 @@ namespace Serialization
             // 암호화/복호화 메서드
             public string result(DesType type, string input)
             {
-                var des = new DESCryptoServiceProvider()
+                DESCryptoServiceProvider des = new DESCryptoServiceProvider()
                 {
                     Key = Key,
                     IV = Key
                 };
 
-                var ms = new MemoryStream();
+                MemoryStream ms = new MemoryStream();
 
                 // 익명 타입으로 transform / data 정의
                 var property = new
@@ -137,8 +137,8 @@ namespace Serialization
                     data = type.Equals(DesType.Encrypt) ? Encoding.UTF8.GetBytes(input.ToCharArray()) : Convert.FromBase64String(input)
                 };
 
-                var cryStream = new CryptoStream(ms, property.transform, CryptoStreamMode.Write);
-                var data = property.data;
+                CryptoStream cryStream = new CryptoStream(ms, property.transform, CryptoStreamMode.Write);
+                byte[] data = property.data;
 
                 cryStream.Write(data, 0, data.Length);
                 cryStream.FlushFinalBlock();
@@ -156,7 +156,7 @@ namespace Serialization
         public static void DESCryptoTestMain()
         {
             // 지겨운 Hello World로 테스트
-            var value = "abcdefgdijkenopqrstupwxwz";
+            var value = "helloworld";
             Console.WriteLine($"테스트 : { value } ");
             // 다시 한번 8자리 지키자.
             var des = new DES("myung123");
