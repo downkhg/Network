@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="NetworkFramework.ReceiveCallBack">
+    <Position X="1.25" Y="3" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Delegate Name="NetworkFramework.ReceiveCallBack.ReceiveFunction">
+        <TypeIdentifier>
+          <NewMemberFileName>UDPSocketWapper.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>CEBQAAAAAAABAAABAAAAAAAAAEAAAAAAAAABAAAAAAA=</HashCode>
+      <FileName>UDPSocketWapper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetworkFramework.UDPSocketWrapper">
+    <Position X="3.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAgAAAAAAAAAAAAAAAAAAAIAEAAAACAACgAAA=</HashCode>
+      <FileName>UDPSocketWapper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetworkFramework.UDPSocketWrapperSample">
+    <Position X="1.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAQIAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>UDPSocketWapper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UDPServer.Program">
+    <Position X="6.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAQAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="NetworkFramework.ReceiveInfo">
+    <Position X="6.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAEAAAAAQAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>UDPSocketWapper.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="맑은 고딕" Size="9" />
+</ClassDiagram>
